@@ -14,6 +14,8 @@ DATABASE_USERNAME=root
 DATABASE_PASSWORD=
 ```
 
+Then run the script using `yarn start`.
+
 ### Dump all tables
 
 ```js
