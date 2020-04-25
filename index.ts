@@ -1,4 +1,4 @@
-import { spawn, spawnSync } from "child_process";
+import { spawn } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import * as dotenv from "dotenv";
@@ -64,23 +64,24 @@ export class MySQLDump {
       this.options.dbName,
       `TABLE`,
       `TABLEOBJ`,
-      ...Object.entries(this.options.flags)
+      ...Object.entries(this.options.flags || {})
         .filter(([key]) => key !== "tables")
         .map(([key, value]) => (value ? FlagsMap.get(key as any) : ""))
         .filter((item) => item),
     ].filter((item) => item);
 
-    const tableStrings = [];
-    const tableObjects = [];
-    this.options.flags.tables.forEach((t) => {
-      if (typeof t === "string") {
-        tableStrings.push(t);
-      } else if (typeof t !== "string" && !t.where) {
-        tableStrings.push(t.table);
-      } else {
-        tableObjects.push(t);
-      }
-    });
+    const tableStrings: string[] = [];
+    const tableObjects: MySQLDumpOptionsFlagsTable[] = [];
+    this.options.flags &&
+      this.options.flags.tables.forEach((t) => {
+        if (typeof t === "string") {
+          tableStrings.push(t);
+        } else if (typeof t !== "string" && !t.where) {
+          tableStrings.push(t.table);
+        } else {
+          tableObjects.push(t);
+        }
+      });
 
     const tableStringsCommand = this.replaceItem(
       "TABLE",
@@ -88,11 +89,17 @@ export class MySQLDump {
       tableStrings
     ).filter(this.removeExtraFields);
 
-    const spawnArray = [];
+    const spawnArray: Promise<any>[] = [];
 
     if (tableStrings.length > 0) {
       spawnArray.push(
         this.spawnAsPromised(spawn(MYSQL_DUMP, [...tableStringsCommand]))
+      );
+    } else {
+      spawnArray.push(
+        this.spawnAsPromised(
+          spawn(MYSQL_DUMP, [...commands.filter(this.removeExtraFields)])
+        )
       );
     }
 
@@ -154,15 +161,14 @@ export class MySQLDump {
 }
 
 new MySQLDump({
-  dbName: process.env.DATABASE_NAME,
-  password: process.env.DATABASE_PASSWORD,
+  dbName: process.env.DATABASE_NAME || "dbName",
+  password: process.env.DATABASE_PASSWORD || "pwd",
   flags: {
     tables: [
-      "Users",
-      "Role",
-      { table: "Field", where: "FieldID = 4" },
-      { table: "Role", where: "Name = 'Manager'" },
-      { table: "Farm", where: "FarmID = 3 OR FarmID = 4" },
+      "customers",
+      "orders",
+      { table: "products", where: "product_id = 4" },
+      { table: "shippers", where: "name = 'Hettinger LLC'" },
     ],
     compact: true,
   },
