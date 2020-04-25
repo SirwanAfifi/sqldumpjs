@@ -3,7 +3,6 @@ import * as fs from "fs";
 import * as path from "path";
 import * as dotenv from "dotenv";
 import { Readable } from "stream";
-import * as chalk from "chalk";
 
 dotenv.config();
 
@@ -114,17 +113,16 @@ export class MySQLDump {
 
     const dbDump = Promise.all(spawnArray);
     let result = await dbDump;
-    const fullPath = path.join(__dirname, "dump");
+    const fullPath = path.join(__dirname, "..", "dump");
     if (!fs.existsSync(fullPath)) {
       fs.mkdirSync(fullPath, { recursive: true });
     }
-    const fileName = `${saveAs}.sql`;
-    const wstream = fs.createWriteStream(`${fullPath}/${saveAs}.sql`);
+    const wstream = fs.createWriteStream(path.join(fullPath, `${saveAs}.sql`));
     return new Promise((resolve, reject) => {
       const readable = Readable.from(result);
       readable.pipe(wstream);
 
-      wstream.on("finish", () => resolve(`/dump/${fileName}`));
+      wstream.on("finish", resolve);
       wstream.on("error", reject);
     });
   }
@@ -159,26 +157,3 @@ export class MySQLDump {
 
   private removeExtraFields = (item) => item !== "TABLE" && item !== "TABLEOBJ";
 }
-
-new MySQLDump({
-  dbName: process.env.DATABASE_NAME || "dbName",
-  password: process.env.DATABASE_PASSWORD || "pwd",
-  flags: {
-    tables: [
-      "customers",
-      "orders",
-      { table: "products", where: "product_id = 4" },
-      { table: "shippers", where: "name = 'Hettinger LLC'" },
-    ],
-    compact: true,
-  },
-})
-  .doBackup("dump")
-  .catch((error: string) =>
-    console.log(chalk.bold.hex("#C90F5E")(`\n\t${error}`))
-  )
-  .then(() =>
-    console.log(
-      chalk.bold.hex("#53AE15")(`\n\t${new Date().toTimeString()}\tDone\n`)
-    )
-  );

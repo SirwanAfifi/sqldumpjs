@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "rimraf dump && ts-node index.ts"
+    "start": "rimraf dump && ts-node src/index.ts"
   },
   "dependencies": {
     "chalk": "^4.0.0",

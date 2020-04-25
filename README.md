@@ -23,7 +23,7 @@ new MySQLDump({
 }).doBackup("outputFileName");
 ```
 
-## Dump specific tables
+### Dump specific tables
 
 ```js
 new MySQLDump({
