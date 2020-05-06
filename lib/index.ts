@@ -15,6 +15,7 @@ const FlagsMap: Map<Partial<keyof MySQLDumpOptionsFlags>, string> = new Map<
   ["compact", "--compact"],
   ["addDropDatabase", "--add-drop-database"],
   ["addDropTable", "--add-drop-table"],
+  ["withRoutines", "--routines"],
 ]);
 
 interface MySQLDumpOptions {
@@ -38,17 +39,15 @@ interface MySQLDumpOptionsFlags {
   compact?: boolean;
   addDropDatabase?: boolean;
   addDropTable?: boolean;
+  withRoutines?: boolean;
 }
 
 export class MySQLDump {
-  constructor(
-    public options: MySQLDumpOptions = {
-      ...options,
-      host: "localhost",
-      port: 3306,
-      user: "root",
-    }
-  ) {}
+  constructor(public options: MySQLDumpOptions) {
+    this.options.user = this.options.user || "root";
+    this.options.host = this.options.host || "localhost";
+    this.options.port = this.options.port || 3306;
+  }
 
   async doBackup(saveAs: string) {
     if (!this.options.dbName || !this.options.password) {

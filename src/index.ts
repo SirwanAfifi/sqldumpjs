@@ -12,6 +12,7 @@ new MySQLDump({
       { table: "shippers", where: "name = 'Hettinger LLC'" },
     ],
     compact: true,
+    withRoutines: true,
   },
 })
   .doBackup("dump")
