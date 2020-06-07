@@ -41,12 +41,18 @@ interface MySQLDumpOptionsFlags {
   addDropTable?: boolean;
   withRoutines?: boolean;
 }
+const DEFAULTS = {
+  host: "localhost",
+  port: 13306,
+  user: "root",
+};
 
 export class MySQLDump {
   constructor(public options: MySQLDumpOptions) {
-    this.options.user = this.options.user || "root";
-    this.options.host = this.options.host || "localhost";
-    this.options.port = this.options.port || 3306;
+    this.options = {
+      ...DEFAULTS,
+      ...this.options,
+    };
   }
 
   async doBackup(saveAs: string) {
