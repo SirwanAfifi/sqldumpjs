@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "declaration": true,
     "strictNullChecks": true,
-    "noUnusedLocals": false,
-    "allowUnusedLabels": false,
-    "noUnusedParameters": false,
-    "pretty": true,
-    "skipLibCheck": true,
-    "lib": ["es2015", "esnext.asynciterable"],
-    "noImplicitAny": false
-  }
+    "target": "es5", 
+    "outDir": "dist",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "lib": ["es2015", "dom"],
+    "rootDir": "src"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

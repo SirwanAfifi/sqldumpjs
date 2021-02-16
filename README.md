@@ -4,17 +4,12 @@ A tiny wrapper around `mysqldump` utility to generate a dump file of a MySQL dat
 
 ### Usage
 
-Add a file called `.env` with the following keys (set values for the keys as well):
+- `yarn add mysqldumpjs`
+- Import the package:
 
+```ts
+import MySQLDump from "mysqldumpjs";
 ```
-HOST=
-PORT=3306
-DATABASE_NAME=
-DATABASE_USERNAME=root
-DATABASE_PASSWORD=
-```
-
-Then run the script using `yarn start`.
 
 ### Dump all tables
 
